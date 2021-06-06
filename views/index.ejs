@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <link rel='stylesheet' href='/stylesheets/style.css' />
+  <script type="text/javascript"
+      src="https://cdnapisec.kaltura.com/p/<%=process.env.KALTURA_PARTNER_ID%>/embedPlaykitJs/uiconf_id/<%=process.env.KALTURA_PLAYER_ID%>"></script>
+</head>
+
+<body>
+  <h1>
+    Get Your Question Answered Live:
+  </h1>
+  <form target="_blank" method="POST" action="/">
+    <label for="firstName">First Name<input type="text" name="firstName"></label>
+    <label for="lastName">Last Name<input type="text" name="lastName"></label>
+    <br>
+    <label for="email">Email<input type="text" name="email"></label>
+    <br>
+    <label for="question">Question<input type="text" size="80" name="question"></label>
+    <br>
+    <input type="submit">
+  </form>
+
+  <h1>Recorded Entries:</h1>
+  <%if(locals.recorded){%>
+    
+    <div id="kaltura-player" style="aspect-ratio: 16/9; max-height: 40vh;"></div>
+    <script type="text/javascript">
+        var player = KalturaPlayer.setup({
+          targetId: "kaltura-player",
+          provider: {
+            partnerId: <%= process.env.KALTURA_PARTNER_ID %>,
+            uiConfId: <%= process.env.KALTURA_PLAYER_ID %>
+          }
+        });
+        //load first entry in player
+        player.loadMedia({ entryId: '<%= recorded%>' });
+    </script>
+    <%}%>
+</body>
+
+</html>
