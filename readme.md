@@ -1,6 +1,3 @@
-# Kaltura Node-JS Template
-All the necessary components, and some nice-to-haves to get a node.js app running with the Kaltura API.
-
 # Summary
 This project is a proof of concept to show you how to programmatically use a recording created from a Kaltura Meeting. The meeting can be run in an ad-hoc, on the fly manner and a recording of the meeting will be available for playback.
 
