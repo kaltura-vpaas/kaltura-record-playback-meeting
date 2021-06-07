@@ -22,9 +22,8 @@
     <input type="submit">
   </form>
 
-  <h1>Recorded Entries:</h1>
-  <%if(locals.recorded){%>
-    
+  <%if(typeof recorded !=='undefined'){%>
+    <h1>Recorded Entries:</h1>
     <div id="kaltura-player" style="aspect-ratio: 16/9; max-height: 40vh;"></div>
     <script type="text/javascript">
         var player = KalturaPlayer.setup({

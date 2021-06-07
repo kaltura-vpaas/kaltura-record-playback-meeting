@@ -19,11 +19,87 @@ This project consists of two components:
 
 To start a meeting, the code from [kaltura-nodejs-template](https://github.com/kaltura-vpaas/kaltura-nodejs-template)  was copied into this project, and you can refer to [Kaltura Meetings Integration Guide](https://github.com/kaltura-vpaas/virtual-meeting-rooms ) for a comprehensive guide to the Meetings API. 
 
-First a form is created to gather all necessary information to start a live meeting. The example use-case would be a student that wants to ask a question to a teacher, so a field for question is provided in 
+First a form is created to gather all necessary information to start a live meeting. The example use-case would be a student that wants to ask a question to a teacher, so a field for question is provided
 
 ![meetingform](readme-assets/meetingform.png)
 
+This form is handled by [index.js](https://github.com/kaltura-vpaas/kaltura-record-playback-meeting/blob/main/routes/index.js#L26) where the Kaltura Meeting is prepared. If you start a Kaltura meeting with your API account and use its record feature, the recording will automatically be ingested into your account's [KMC](https://kmc.kaltura.com/index.php/kmcng/login)
 
+The challenge, is how does this application associate the question being asked with the correct recording?
+
+In [index.js](https://github.com/kaltura-vpaas/kaltura-record-playback-meeting/blob/main/routes/index.js#L26) this is accomplished by creating a unique identifier UUID for this question that can be later used to retrieve its saved video:  
+
+```javascript
+  var adhocUUID = uuidv4();
+  //uuid will be stripped of - in Kaltura system. Strip now
+  //so the correct string can be searched for.
+  adhocUUID = adhocUUID.replaceAll("-", "");
+  res.cookie('adhoc_uuid', adhocUUID);
+```
+
+The UUID is stored in a cookie and works for this simple proof of concept, however this method of persistence is not advised for any production application.
+
+Next, the UUID is inserted into the name of the room which is what the Kaltura API uses as part of the title of the recorded meeting:
+
+```javascript
+let room = await createRoom(adminKs, req.body.question + " " + adhocUUID);
+```
+
+Finally, two separate links for a meeting room are created:  one link for an admin (Teacher) and another for a student, again in any real-world application these two links would be handled via separate flows as you would not want the student having access to the teacher's room with full controls, but for testing purposes, it is convenient for you to be able to access both links on the same page.
+
+```javascript
+  let adminRoom = await joinRoom(null, room.id,
+    true,
+    "Admin Name",
+    "Admin Last Name",
+    "admin@admin.admin");
+
+  let studentRoom = await joinRoom(null, room.id,
+    false,
+    req.body.firstName,
+    req.body.lastName,
+    req.body.email);
+```
+
+From this point, you will want to open a meeting link and record a meeting. Once you stop the meeting, or the recording, a file will be uploaded to your [KMC](https://kmc.kaltura.com/index.php/kmcng/login) whose name will include the UUID created above. 
+
+It takes a few moments for the recording to be ready, but once it is, it will appear on the first page of the demo at `/` 
+
+The file is found using the [media.list](https://developer.kaltura.com/console/service/media/action/list) API call and its useful `nameLike` search parameter to search for the UUID retrieved from the cookie created in the previous step. 
+
+```javascript
+let media = await listMedia(adminKs, req.cookies.adhoc_uuid);
+```
+
+Once the media is ready and you refresh the root page of this project, which is handled by [index.js](https://github.com/kaltura-vpaas/kaltura-record-playback-meeting/blob/main/routes/index.js#L18)
+
+```javascript
+  if (media.totalCount > 0) {
+    ret = { recorded: media.objects[0].id }
+  }
+  res.render('index', ret);
+```
+
+ the entryId of the recording is passed to [`index.ejs`](https://github.com/kaltura-vpaas/kaltura-record-playback-meeting/blob/main/views/index.ejs#L25) via a variable named `recorded` where a Kaltura player is set up to play back the video:
+
+```html
+ <h1>Recorded Entries:</h1>
+  <%if(locals.recorded){%>
+    
+    <div id="kaltura-player" style="aspect-ratio: 16/9; max-height: 40vh;"></div>
+    <script type="text/javascript">
+        var player = KalturaPlayer.setup({
+          targetId: "kaltura-player",
+          provider: {
+            partnerId: <%= process.env.KALTURA_PARTNER_ID %>,
+            uiConfId: <%= process.env.KALTURA_PLAYER_ID %>
+          }
+        });
+        //load first entry in player
+        player.loadMedia({ entryId: '<%= recorded%>' });
+    </script>
+    <%}%>
+```
 
 # How you can help (guidelines for contributors) 
 

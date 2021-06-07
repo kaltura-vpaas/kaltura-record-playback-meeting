@@ -8,7 +8,6 @@ const { v4: uuidv4 } = require('uuid');
 
 const KalturaClientFactory = require('../lib/kalturaClientFactory');
 
-
 /* GET home page. */
 router.get('/', async function (req, res, next) {
   let adminKs = await KalturaClientFactory.getKS(process.env.KALTURA_USER_ID,
@@ -31,7 +30,6 @@ router.post('/', async function (req, res, next) {
   //uuid will be stripped of - in Kaltura system. Strip now
   //so the correct string can be searched for.
   adhocUUID = adhocUUID.replaceAll("-", "");
-  console.log("ADHOC:") + adhocUUID;
   res.cookie('adhoc_uuid', adhocUUID);
 
   let room = await createRoom(adminKs, req.body.question + " " + adhocUUID);
