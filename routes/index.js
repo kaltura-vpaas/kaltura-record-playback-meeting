@@ -1,7 +1,7 @@
 var express = require('express');
 var router = express.Router();
-var createRoom = require('../lib/createroom');
-var joinRoom = require('../lib/joinroom');
+var createRoom = require('../lib/createRoom');
+var joinRoom = require('../lib/joinRoom');
 var listMedia = require('../lib/mediaList');
 var kaltura = require('kaltura-client');
 const { v4: uuidv4 } = require('uuid');
