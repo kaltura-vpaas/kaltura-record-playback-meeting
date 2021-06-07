@@ -1,8 +1,17 @@
 # Kaltura Node-JS Template
-All the necessary components, and some nice-to-haves to get a node.js app running with the Kaltura  API.
+All the necessary components, and some nice-to-haves to get a node.js app running with the Kaltura API.
 
 # Summary
- This project is a proof of concept to show you how to programmatically use a recording created from a Kaltura Meeting. The meeting can be run in an ad-hoc, on the fly manner and a recording of the meeting will be available for playback.
+This project is a proof of concept to show you how to programmatically use a recording created from a Kaltura Meeting. The meeting can be run in an ad-hoc, on the fly manner and a recording of the meeting will be available for playback.
+
+# Live Demo:
+
+https://kaltura-playback-meeting.herokuapp.com/
+
+# Prerequisites
+
+1. [Nodejs](https://nodejs.org/en/) 
+2. [Kaltura VPaaS account](https://corp.kaltura.com/video-paas/registration?utm_campaign=Meetabout&utm_medium=affiliates&utm_source=GitHub). Once you've opened an account, send an email to <VPaaS@kaltura.com> to activate Meetings.
 
 # How to Run
 1. Copy env.template to .env and fill in your information
@@ -45,6 +54,10 @@ Next, the UUID is inserted into the name of the room which is what the Kaltura A
 let room = await createRoom(adminKs, req.body.question + " " + adhocUUID);
 ```
 
+The room is created in [createRoom.js](https://github.com/kaltura-vpaas/kaltura-record-playback-meeting/blob/main/lib/createRoom.js#L11)
+
+Take note of the `custom_rec_auto_start:1` parameter being used to automatically start recordings when the meeting starts. You can learn about other parameters for Kaltura Meetings at [Kaltura Meetings Integration Guide](https://github.com/kaltura-vpaas/virtual-meeting-rooms )
+
 Finally, two separate links for a meeting room are created:  one link for an admin (Teacher) and another for a student, again in any real-world application these two links would be handled via separate flows as you would not want the student having access to the teacher's room with full controls, but for testing purposes, it is convenient for you to be able to access both links on the same page.
 
 ```javascript
@@ -60,6 +73,8 @@ Finally, two separate links for a meeting room are created:  one link for an adm
     req.body.lastName,
     req.body.email);
 ```
+
+These links are created in [joinRoom.js](https://github.com/kaltura-vpaas/kaltura-record-playback-meeting/blob/main/lib/joinRoom.js)
 
 From this point, you will want to open a meeting link and record a meeting. Once you stop the meeting, or the recording, a file will be uploaded to your [KMC](https://kmc.kaltura.com/index.php/kmcng/login) whose name will include the UUID created above. 
 
