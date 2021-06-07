@@ -12,10 +12,12 @@ const KalturaClientFactory = require('../lib/kalturaClientFactory');
 router.get('/', async function (req, res, next) {
   let adminKs = await KalturaClientFactory.getKS(process.env.KALTURA_USER_ID,
     { type: kaltura.enums.SessionType.ADMIN });
-  let media = await listMedia(adminKs, req.cookies.adhoc_uuid);
-  var ret;
-  if (media.totalCount > 0) {
-    ret = { recorded: media.objects[0].id }
+  if (req.cookies.adhoc_uuid) {
+    let media = await listMedia(adminKs, req.cookies.adhoc_uuid);
+    var ret;
+    if (media.totalCount > 0) {
+      ret = { recorded: media.objects[0].id }
+    }
   }
 
   res.render('index', ret);
