@@ -31,6 +31,7 @@ router.post('/', async function (req, res, next) {
   var adhocUUID = uuidv4();
   //uuid will be stripped of - in Kaltura system. Strip now
   //so the correct string can be searched for.
+  console.log(adhocUUID);
   adhocUUID = adhocUUID.replaceAll("-", "");
   res.cookie('adhoc_uuid', adhocUUID);
 
