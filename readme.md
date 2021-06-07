@@ -8,6 +8,10 @@ This project is a proof of concept to show you how to programmatically use a rec
 
 https://kaltura-playback-meeting.herokuapp.com/
 
+# Video Walkthrough:
+
+http://www.kaltura.com/tiny/w97qa
+
 # Prerequisites
 
 1. [Nodejs](https://nodejs.org/en/) 
