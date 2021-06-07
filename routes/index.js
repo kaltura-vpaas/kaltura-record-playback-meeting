@@ -32,7 +32,7 @@ router.post('/', async function (req, res, next) {
   //uuid will be stripped of - in Kaltura system. Strip now
   //so the correct string can be searched for.
   console.log(adhocUUID);
-  adhocUUID = adhocUUID.replaceAll("-", "");
+  adhocUUID = adhocUUID.replace(/\-/g, '');
   res.cookie('adhoc_uuid', adhocUUID);
 
   let room = await createRoom(adminKs, req.body.question + " " + adhocUUID);
